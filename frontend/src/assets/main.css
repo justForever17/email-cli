@@ -1,0 +1,427 @@
+@import './base.css';
+
+#app {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0 auto;
+  font-weight: normal;
+}
+
+.page-container {
+  padding: 40px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: slideUpFade 0.6s var(--transition-normal);
+}
+
+/* ==========================================================================
+   Apple Cupertino UI Overrides for Element Plus
+   ========================================================================== */
+
+/* 1. Cards - Premium Paper and Glassmorphism */
+.el-card {
+  --el-card-border-color: var(--border-color-base);
+  --el-card-bg-color: var(--background-color-light);
+  --el-card-padding: 24px;
+  border-radius: var(--border-radius-lg) !important;
+  border: 1px solid var(--border-color-base) !important;
+  box-shadow: var(--box-shadow) !important;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), background-color 0.3s !important;
+  overflow: hidden;
+}
+
+.el-card__header {
+  border-bottom: 1px solid var(--border-color-base) !important;
+  padding: 18px 24px !important;
+}
+
+.el-card__body {
+  padding: 24px !important;
+}
+
+/* 2. Buttons - Rounded Capsules with Physical Elastic Recoil */
+.el-button {
+  border-radius: var(--border-radius-full) !important;
+  font-weight: 500 !important;
+  height: auto !important;
+  padding: 10px 20px !important;
+  transition: all var(--transition-fast) !important;
+  border: 1px solid var(--border-color-base) !important;
+  background-color: var(--background-color-light) !important;
+  color: var(--primary-text-color) !important;
+}
+
+.el-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--box-shadow-sm) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+}
+
+/* Active Pressed Compression Physical Feedback */
+.el-button:active {
+  transform: scale(0.96) !important;
+}
+
+.el-button--primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: #FFFFFF !important;
+}
+
+.el-button--primary:hover {
+  background-color: var(--primary-color-hover) !important;
+  border-color: var(--primary-color-hover) !important;
+  color: #FFFFFF !important;
+}
+
+.el-button--success {
+  background-color: var(--success-color) !important;
+  border-color: var(--success-color) !important;
+  color: #FFFFFF !important;
+}
+
+.el-button--success:hover {
+  opacity: 0.9;
+  border-color: var(--success-color) !important;
+  color: #FFFFFF !important;
+}
+
+.el-button--danger {
+  background-color: var(--danger-color) !important;
+  border-color: var(--danger-color) !important;
+  color: #FFFFFF !important;
+}
+
+.el-button--danger:hover {
+  opacity: 0.9;
+  border-color: var(--danger-color) !important;
+  color: #FFFFFF !important;
+}
+
+.el-button--warning {
+  background-color: var(--warning-color) !important;
+  border-color: var(--warning-color) !important;
+  color: #FFFFFF !important;
+}
+
+.el-button--warning:hover {
+  opacity: 0.9;
+  border-color: var(--warning-color) !important;
+  color: #FFFFFF !important;
+}
+
+.el-button--info {
+  background-color: var(--border-color-base) !important;
+  border-color: var(--border-color-base) !important;
+  color: var(--primary-text-color) !important;
+}
+
+.el-button--info:hover {
+  background-color: var(--border-color-light) !important;
+  border-color: var(--border-color-light) !important;
+  color: var(--primary-text-color) !important;
+}
+
+.el-button.is-disabled, 
+.el-button.is-disabled:hover {
+  background-color: var(--border-color-light) !important;
+  border-color: var(--border-color-base) !important;
+  color: var(--placeholder-text-color) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.el-button--text, .el-button--primary.is-link {
+  background-color: transparent !important;
+  border: none !important;
+  color: var(--primary-color) !important;
+  padding: 0 !important;
+  height: auto !important;
+}
+
+.el-button--text:hover, .el-button--primary.is-link:hover {
+  box-shadow: none !important;
+  transform: none !important;
+  color: var(--primary-color-hover) !important;
+  background-color: transparent !important;
+}
+
+/* 3. Inputs & Form Fields - Capsule round with soft blue focus halo */
+.el-input__inner, .el-textarea__inner {
+  border-radius: var(--border-radius) !important;
+  border: 1px solid var(--border-color-base) !important;
+  background-color: var(--background-color-base) !important;
+  color: var(--primary-text-color) !important;
+  padding: 10px 14px !important;
+  transition: all var(--transition-fast) !important;
+}
+
+.el-input__wrapper {
+  background-color: var(--background-color-base) !important;
+  border-radius: var(--border-radius) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--border-color-base) !important;
+  transition: all var(--transition-fast) !important;
+}
+
+.el-input__wrapper.is-focus, .el-input__inner:focus, .el-textarea__inner:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15) !important;
+  background-color: var(--background-color-light) !important;
+}
+
+/* 4. Tables - Elegant Borderless Horizontal Design */
+.el-table {
+  --el-table-border-color: var(--border-color-extra-light) !important;
+  --el-table-header-bg-color: var(--background-color-base) !important;
+  --el-table-bg-color: transparent !important;
+  --el-table-tr-bg-color: transparent !important;
+  border-radius: var(--border-radius-md) !important;
+  border: none !important;
+  background-color: transparent !important;
+}
+
+.el-table::before, .el-table::after {
+  display: none !important;
+}
+
+.el-table__inner-wrapper::after {
+  display: none !important;
+}
+
+.el-table th.el-table__cell {
+  background-color: var(--background-color-base) !important;
+  color: var(--secondary-text-color) !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  padding: 14px 0 !important;
+  border-bottom: 1px solid var(--border-color-base) !important;
+}
+
+.el-table td.el-table__cell {
+  padding: 16px 0 !important;
+  border-bottom: 1px solid var(--border-color-extra-light) !important;
+}
+
+.el-table__row {
+  transition: background-color var(--transition-fast) !important;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+  background-color: transparent !important; /* Remove stripe for absolute minimalism */
+}
+
+/* Apple Table Row Hover Slide-Right Effect */
+.el-table__row:hover > td.el-table__cell {
+  background-color: var(--border-color-light) !important;
+}
+
+/* 5. Dialogs - Large Curved Glassmorphism Dialog */
+.el-dialog {
+  border-radius: var(--border-radius-xl) !important;
+  background: var(--glass-background) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--box-shadow-lg) !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.el-dialog__header {
+  padding: 24px 24px 10px !important;
+}
+
+.el-dialog__title {
+  font-weight: 700 !important;
+  font-size: 20px !important;
+  color: var(--primary-text-color) !important;
+  letter-spacing: -0.5px;
+}
+
+.el-dialog__body {
+  padding: 20px 24px 24px !important;
+  color: var(--regular-text-color) !important;
+}
+
+.el-dialog__footer {
+  padding: 10px 24px 24px !important;
+  border-top: none !important;
+}
+
+/* 6. Tabs & Badges - Rounded and Pill styles */
+.el-tabs__nav-wrap::after {
+  height: 1px !important;
+  background-color: var(--border-color-base) !important;
+}
+
+.el-tabs__active-bar {
+  background-color: var(--primary-color) !important;
+  height: 3px !important;
+  border-radius: var(--border-radius-full) !important;
+}
+
+.el-tabs__item {
+  font-weight: 500 !important;
+  font-size: 15px !important;
+  color: var(--secondary-text-color) !important;
+}
+
+.el-tabs__item.is-active {
+  color: var(--primary-color) !important;
+  font-weight: 600 !important;
+}
+
+.el-tag {
+  border-radius: var(--border-radius-full) !important;
+  font-weight: 500 !important;
+  padding: 4px 12px !important;
+  border: 1px solid transparent !important;
+}
+
+.el-tag--plain {
+  background-color: var(--border-color-light) !important;
+  border-color: var(--border-color-base) !important;
+  color: var(--regular-text-color) !important;
+}
+
+.el-tag--primary {
+  background-color: rgba(0, 113, 227, 0.1) !important;
+  color: var(--primary-color) !important;
+}
+
+.el-tag--success {
+  background-color: rgba(52, 199, 89, 0.1) !important;
+  color: var(--success-color) !important;
+}
+
+.el-tag--danger {
+  background-color: rgba(255, 59, 48, 0.1) !important;
+  color: var(--danger-color) !important;
+}
+
+.el-tag--warning {
+  background-color: rgba(255, 149, 0, 0.1) !important;
+  color: var(--warning-color) !important;
+}
+
+/* 7. Switch & Select */
+.el-switch.is-checked .el-switch__core {
+  background-color: var(--success-color) !important;
+  border-color: var(--success-color) !important;
+}
+
+.el-select .el-input.is-focus .el-input__wrapper {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15) !important;
+}
+
+.el-select-dropdown__item.selected {
+  color: var(--primary-color) !important;
+  font-weight: 600 !important;
+}
+
+/* ==========================================================================
+   Cupertino Common Layout & Typography Utilities
+   ========================================================================== */
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-center { display: flex; justify-content: center; align-items: center; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-grow { flex-grow: 1; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.gap-sm { gap: 8px; }
+.gap-md { gap: 16px; }
+.gap-lg { gap: 24px; }
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.full-width { width: 100%; }
+
+.m-0 { margin: 0; }
+.mb-4 { margin-bottom: 16px; }
+.mb-6 { margin-bottom: 24px; }
+.mb-8 { margin-bottom: 32px; }
+.mt-4 { margin-top: 16px; }
+.mt-6 { margin-top: 24px; }
+.p-0 { padding: 0; }
+.p-4 { padding: 16px; }
+.p-6 { padding: 24px; }
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-text-color);
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.text-primary { color: var(--primary-color); }
+.text-success { color: var(--success-color); }
+.text-warning { color: var(--warning-color); }
+.text-danger { color: var(--danger-color); }
+.text-info { color: var(--info-color); }
+.text-muted { color: var(--secondary-text-color); }
+
+.cursor-pointer { cursor: pointer; }
+
+.hover-scale {
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast) !important;
+}
+
+.hover-scale:hover {
+  transform: translateY(-2px) scale(1.01) !important;
+  box-shadow: var(--box-shadow-md) !important;
+}
+
+.hover-scale:active {
+  transform: scale(0.98) !important;
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .sm-hidden { display: none; }
+  .sm-flex-col { flex-direction: column; }
+  .sm-w-full { width: 100%; }
+}
+
+/* ==========================================================================
+   Cupertino Key Text Select & Copy Enablers
+   ========================================================================== */
+.email-table,
+.mail-list-table,
+.mail-detail,
+.mail-info-card,
+.mail-content-wrapper,
+.mail-content-text,
+.email-title,
+.info-value,
+.password-text,
+.time-field,
+.cell,
+pre {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}

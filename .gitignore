@@ -1,0 +1,40 @@
+# Python Caches & Environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.env
+.pytest_cache/
+
+# IDE Settings
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Front-End Web Artifacts
+frontend/node_modules/
+frontend/dist/
+.eslintcache
+.vite-cache/
+
+# PyInstaller GUI Bundling & Build Directories
+build_tmp/
+dist_gui/
+Email-cli.spec
+
+# SQLite Database Files & Backups
+backend/data/*.db
+build_tmp_db_backup.db
+data/
+
+# Application Log Files
+*.log
+logs/
+email-cli.log
+backend/email-cli.log
