@@ -71,7 +71,8 @@ def cmd_list(args, db):
         email.pop('access_token', None)
         
     if args.json:
-        print(json.dumps(emails_list, default=serialize_datetime, ensure_ascii=False, indent=2))
+        emails_only = [e.get('email') for e in emails_list if e.get('email')]
+        print(json.dumps(emails_only, ensure_ascii=False, indent=2))
         return
         
     headers = ["ID", "用户ID", "邮箱地址", "类型", "接收服务器", "SSL", "最后检查时间", "实时检查"]
