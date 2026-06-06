@@ -107,13 +107,10 @@ class OutlookMailHandler:
                         status, folder_list = mail.list()
                         if status == 'OK' and folder_list:
                             for f in folder_list:
-                                f_decoded = f.decode('utf-8', errors='ignore')
+                                f_decoded = f.decode('utf-8', errors='ignore').strip()
                                 # 解析文件夹名
-                                f_name = ""
-                                if '"' in f_decoded:
-                                    parts = f_decoded.split('"')
-                                    if len(parts) >= 2:
-                                        f_name = parts[-2]
+                                if f_decoded.endswith('"'):
+                                    f_name = f_decoded.split('"')[-2]
                                 else:
                                     f_name = f_decoded.split()[-1]
                                 f_name = f_name.strip()
@@ -299,7 +296,8 @@ class OutlookMailHandler:
                             record['subject'], 
                             record['sender'], 
                             record['received_time'], 
-                            record['content']
+                            record['content'],
+                            folder=record.get('folder', 'INBOX')
                         )
                         if success:
                             saved_count += 1
