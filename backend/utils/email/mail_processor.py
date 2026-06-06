@@ -89,13 +89,17 @@ class MailProcessor:
                 # 检查邮件是否已存在
                 subject = record.get("subject", "(无主题)")
                 sender = record.get("sender", "(未知发件人)")
+                received_time = record.get("received_time")
+                if received_time is None:
+                    received_time = datetime.now()
                 
-                logger.debug(f"检查邮件是否存在: '{subject[:30]}...' 发件人: '{sender[:30]}...'")
+                logger.debug(f"检查邮件是否存在: '{subject[:30]}...' 发件人: '{sender[:30]}...' 时间: {received_time}")
                 
-                existing = db.get_mail_record_by_subject_and_sender(
+                existing = db.get_mail_record_by_subject_sender_and_time(
                     email_id,
                     subject,
-                    sender
+                    sender,
+                    received_time
                 )
                 
                 if not existing:
@@ -107,7 +111,7 @@ class MailProcessor:
                         subject=subject,
                         sender=sender,
                         content=record.get("content", "(无内容)"),
-                        received_time=record.get("received_time", datetime.now()),
+                        received_time=received_time,
                         folder=record.get("folder", "INBOX")
                     )
                     

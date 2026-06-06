@@ -756,6 +756,18 @@ class Database:
             logger.error(f"获取邮件记录失败: {str(e)}")
             return None
 
+    def get_mail_record_by_subject_sender_and_time(self, email_id, subject, sender, received_time):
+        """根据主题、发件人和接收时间获取邮件记录"""
+        try:
+            cursor = self.conn.execute(
+                "SELECT * FROM mail_records WHERE email_id = ? AND subject = ? AND sender = ? AND received_time = ?",
+                (email_id, subject, sender, received_time)
+            )
+            return cursor.fetchone()
+        except Exception as e:
+            logger.error(f"获取邮件记录失败: {str(e)}")
+            return None
+
     def save_mail_records(self, email_id: int, mail_records: List[Dict], progress_callback: Optional[Callable] = None) -> int:
         """保存邮件记录到数据库"""
         saved_count = 0
@@ -779,13 +791,17 @@ class Database:
                 # 检查邮件是否已存在
                 subject = record.get("subject", "(无主题)")
                 sender = record.get("sender", "(未知发件人)")
+                received_time = record.get("received_time")
+                if received_time is None:
+                    received_time = datetime.now()
                 
-                logger.debug(f"检查邮件是否存在: '{subject[:30]}...' 发件人: '{sender[:30]}...'")
+                logger.debug(f"检查邮件是否存在: '{subject[:30]}...' 发件人: '{sender[:30]}...' 时间: {received_time}")
                 
-                existing = self.get_mail_record_by_subject_and_sender(
+                existing = self.get_mail_record_by_subject_sender_and_time(
                     email_id,
                     subject,
-                    sender
+                    sender,
+                    received_time
                 )
                 
                 if not existing:
@@ -797,7 +813,7 @@ class Database:
                         subject=subject,
                         sender=sender,
                         content=record.get("content", "(无内容)"),
-                        received_time=record.get("received_time", datetime.now()),
+                        received_time=received_time,
                         folder=record.get("folder", "INBOX")
                     )
                     
