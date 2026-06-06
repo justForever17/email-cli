@@ -708,14 +708,27 @@ const handleBatchDelete = () => {
 }
 
 const handleCheck = async (row) => {
+  const loadingInstance = ElLoading.service({
+    lock: true,
+    text: `正在同步邮箱 ${row.email} 的最新邮件...`,
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
   try {
     const result = await emailsStore.checkEmail(row.id)
+    loadingInstance.close()
     if (result && result.status === 'processing') {
       ElMessage.warning(result.message || '邮箱正在同步中，请稍候...')
     } else {
-      ElMessage.info(`正在检查邮箱 ${row.email}，请稍候...`)
+      ElMessage.success(`邮箱 ${row.email} 同步收信完成！`)
+      // 成功后，刷新主列表以更新最后同步时间
+      await emailsStore.fetchEmails()
+      // 如果当前邮件列表弹窗已打开且是该邮箱，刷新邮件记录
+      if (mailListDialogVisible.value && emailsStore.currentEmailId === row.id) {
+        await emailsStore.fetchMailRecords(row.id)
+      }
     }
   } catch (error) {
+    loadingInstance.close()
     console.error('检查邮箱失败:', error)
     ElMessage.error('同步失败')
   }
