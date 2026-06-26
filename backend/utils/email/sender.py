@@ -99,11 +99,11 @@ class MailSender:
                 # 如果是 OAuth2 Outlook 邮箱
                 if refresh_token and client_id:
                     logger.info("尝试使用 OAuth2 (XOAUTH2) 认证方式登录 Outlook...")
-                    access_token = OutlookMailHandler.get_new_access_token(refresh_token, client_id)
+                    access_token, new_refresh_token = OutlookMailHandler.get_new_access_token(refresh_token, client_id)
                     if access_token:
                         if db and email_info.get('id'):
-                            # 刷新并持久化保存新的访问令牌到数据库
-                            db.update_email_token(email_info['id'], access_token)
+                            # 刷新并持久化保存新的访问令牌及可选的刷新令牌到数据库
+                            db.update_email_token(email_info['id'], access_token, new_refresh_token)
                         
                         # 生成 XOAUTH2 授权字符串并进行 Base64 编码
                         auth_string = OutlookMailHandler.generate_auth_string(email_address, access_token)

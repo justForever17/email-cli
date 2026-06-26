@@ -26,7 +26,7 @@ class OutlookMailHandler:
     
     @staticmethod
     def get_new_access_token(refresh_token, client_id="9e5f94bc-e8a4-4e73-b8be-63364c29d753"):
-        """刷新获取新的access_token"""
+        """刷新获取新的access_token及（可选的）新refresh_token"""
         tenant_id = 'common'
         refresh_token_data = {
             'grant_type': 'refresh_token',
@@ -38,15 +38,17 @@ class OutlookMailHandler:
         try:
             response = requests.post(token_url, data=refresh_token_data)
             if response.status_code == 200:
-                new_access_token = response.json().get('access_token')
+                resp_json = response.json()
+                new_access_token = resp_json.get('access_token')
+                new_refresh_token = resp_json.get('refresh_token')
                 logger.info(f"成功获取新的访问令牌")
-                return new_access_token
+                return new_access_token, new_refresh_token
             else:
                 logger.error(f"刷新令牌失败: {response.status_code} - {response.text}")
-                return None
+                return None, None
         except Exception as e:
             logger.error(f"刷新令牌过程中发生异常: {str(e)}")
-            return None
+            return None, None
 
     @staticmethod
     def generate_auth_string(user, token):
@@ -251,8 +253,8 @@ class OutlookMailHandler:
         progress_callback(0, "正在获取访问令牌...")
         
         try:
-            # 获取新的访问令牌
-            access_token = OutlookMailHandler.get_new_access_token(refresh_token, client_id)
+            # 获取新的访问令牌及可能的刷新令牌
+            access_token, new_refresh_token = OutlookMailHandler.get_new_access_token(refresh_token, client_id)
             if not access_token:
                 error_msg = f"邮箱{email_address}(ID={email_id})获取访问令牌失败"
                 logger.error(error_msg)
@@ -263,7 +265,7 @@ class OutlookMailHandler:
                 }
             
             # 更新令牌到数据库
-            db.update_email_token(email_id, access_token)
+            db.update_email_token(email_id, access_token, new_refresh_token)
             
             # 报告进度
             progress_callback(10, "开始获取邮件...")

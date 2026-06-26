@@ -289,16 +289,18 @@ class EmailBatchProcessor:
                 
                 # 获取新的访问令牌
                 try:
-                    access_token = OutlookMailHandler.get_new_access_token(refresh_token, client_id)
+                    access_token, new_refresh_token = OutlookMailHandler.get_new_access_token(refresh_token, client_id)
                     if not access_token:
                         error_msg = "获取访问令牌失败"
                         if callback:
                             callback(0, error_msg)
                         return {'success': False, 'message': error_msg}
                     
-                    # 更新邮箱的访问令牌
-                    self.db.update_email_token(email_id, access_token)
+                    # 更新邮箱的访问令牌及刷新令牌
+                    self.db.update_email_token(email_id, access_token, new_refresh_token)
                     email_info['access_token'] = access_token
+                    if new_refresh_token:
+                        email_info['refresh_token'] = new_refresh_token
                     
                     # 记录开始处理
                     log_email_start(email_info['email'], email_id)

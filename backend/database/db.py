@@ -520,19 +520,26 @@ class Database:
         )
         self.conn.commit()
     
-    def update_email_token(self, email_id, access_token):
-        """更新Outlook邮箱的访问令牌"""
-        logger.debug(f"更新邮箱访问令牌, ID: {email_id}")
+    def update_email_token(self, email_id, access_token, refresh_token=None):
+        """更新Outlook邮箱的访问令牌及（可选的）刷新令牌"""
+        logger.debug(f"更新邮箱令牌, ID: {email_id}")
         try:
-            self.conn.execute(
-                "UPDATE emails SET access_token = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-                (access_token, email_id)
-            )
+            if refresh_token:
+                self.conn.execute(
+                    "UPDATE emails SET access_token = ?, refresh_token = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                    (access_token, refresh_token, email_id)
+                )
+                logger.info(f"成功更新邮箱 ID:{email_id} 的访问令牌和刷新令牌")
+            else:
+                self.conn.execute(
+                    "UPDATE emails SET access_token = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                    (access_token, email_id)
+                )
+                logger.info(f"成功更新邮箱 ID:{email_id} 的访问令牌")
             self.conn.commit()
-            logger.info(f"成功更新邮箱 ID:{email_id} 的访问令牌")
             return True
         except Exception as e:
-            logger.error(f"更新邮箱访问令牌失败, ID: {email_id}, 错误: {str(e)}")
+            logger.error(f"更新邮箱令牌失败, ID: {email_id}, 错误: {str(e)}")
             return False
     
     def delete_email(self, email_id, user_id=None):
