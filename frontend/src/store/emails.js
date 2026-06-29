@@ -169,6 +169,43 @@ export const useEmailsStore = defineStore('emails', {
       }
     },
     
+    // 导出邮箱账号为 txt
+    async exportEmails(emailIds) {
+      this.loading = true;
+      this.error = null;
+      
+      try {
+        const response = await api.exportEmails(emailIds);
+        const blob = new Blob([response.data], { type: 'text/plain;charset=utf-8' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        
+        let filename = 'emails_export.txt';
+        const disposition = response.headers['content-disposition'];
+        if (disposition && disposition.indexOf('attachment') !== -1) {
+          const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+          const matches = filenameRegex.exec(disposition);
+          if (matches != null && matches[1]) { 
+            filename = matches[1].replace(/['"]/g, '');
+          }
+        }
+        
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        return true;
+      } catch (error) {
+        this.error = '导出邮箱账号失败';
+        console.error(error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+    
     // 获取所有邮箱
     async fetchEmails() {
       this.loading = true;

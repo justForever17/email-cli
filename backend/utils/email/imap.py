@@ -68,9 +68,9 @@ class IMAPMailHandler:
                 callback(0, "正在连接邮箱服务器")
                 
             if use_ssl:
-                mail = imaplib.IMAP4_SSL(server, port)
+                mail = imaplib.IMAP4_SSL(server, port, timeout=30)
             else:
-                mail = imaplib.IMAP4(server, port)
+                mail = imaplib.IMAP4(server, port, timeout=30)
             
             # 登录
             logger.info(f"登录邮箱 {email_address}")

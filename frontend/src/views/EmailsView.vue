@@ -35,6 +35,13 @@
           >
             批量收信
           </el-button>
+          <el-button 
+            type="warning" 
+            @click="handleBatchExport"
+            :icon="Download"
+          >
+            {{ hasSelectedEmails ? '导出选中' : '导出全部' }}
+          </el-button>
         </div>
         
         <!-- Apple Premium Borderless modern Table -->
@@ -264,7 +271,13 @@
       >
         <div v-if="currentEmail" class="mail-dialog-header flex-between mb-6">
           <h3 class="email-title">
-            <span class="text-primary">{{ currentEmail.email }}</span> 的同步箱
+            <span 
+              class="text-primary cursor-pointer hover-underline" 
+              @click="copyToClipboard(currentEmail.email)"
+              title="点击复制邮箱"
+            >
+              {{ currentEmail.email }}
+            </span> 的同步箱
           </h3>
           <el-button 
             type="primary"
@@ -745,6 +758,35 @@ const handleBatchCheck = async () => {
   } catch (error) {
     console.error('批量同步邮箱失败:', error)
     ElMessage.error('批量同步失败')
+  }
+}
+
+const handleBatchExport = async () => {
+  const selectedIds = emailsStore.selectedEmails
+  const count = emailsStore.selectedEmailsCount
+  
+  try {
+    if (selectedIds && selectedIds.length > 0) {
+      await emailsStore.exportEmails(selectedIds)
+      ElMessage.success(`成功导出选中的 ${count} 个邮箱账号！`)
+    } else {
+      await emailsStore.exportEmails()
+      ElMessage.success('成功导出全部邮箱账号！')
+    }
+  } catch (err) {
+    console.error('批量导出邮箱失败:', err)
+    ElMessage.error('导出失败，请重试')
+  }
+}
+
+const copyToClipboard = async (text) => {
+  if (!text) return
+  try {
+    await navigator.clipboard.writeText(text)
+    ElMessage.success('已成功复制邮箱名到剪切板！')
+  } catch (err) {
+    console.error('复制失败:', err)
+    ElMessage.error('复制失败，请手动复制')
   }
 }
 
@@ -1239,5 +1281,13 @@ onMounted(() => {
   font-family: monospace;
   font-weight: 600;
   color: var(--primary-color);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover-underline:hover {
+  text-decoration: underline;
 }
 </style>

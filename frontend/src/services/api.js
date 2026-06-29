@@ -258,6 +258,14 @@ const apiMethods = {
     return api.post('/emails/import', { data, mail_type: mailType });
   },
   
+  exportEmails: (ids) => {
+    const params = ids && ids.length ? { ids: ids.join(',') } : {};
+    return api.get('/emails/export', {
+      params,
+      responseType: 'blob'
+    });
+  },
+  
   search: (query, searchIn = []) => {
     return api.post('/search', { query, search_in: searchIn });
   },
@@ -282,7 +290,8 @@ const apiMethods = {
         return api.post('/emails/batch_delete', { email_ids: emailIds });
       }
     },
-    import: (data) => api.post('/emails/import', data)
+    import: (data) => api.post('/emails/import', data),
+    export: (ids) => apiMethods.exportEmails(ids)
   },
   
   // 工具方法

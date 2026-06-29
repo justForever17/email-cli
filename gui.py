@@ -163,9 +163,22 @@ console.log('GUI自适应环境加载完成，API_URL:', window.API_URL, 'WS_URL
     finally:
         # 9. 优雅的生命周期退出清理：图形界面被用户点击关闭后自动安全关闭本地数据库，销毁全部守护线程
         logger.info("原生客户端主窗口已关闭，正在清理系统级资源...")
+        try:
+            if 'email_processor' in locals():
+                logger.info("正在停止后台实时收信任务...")
+                email_processor.stop_real_time_check()
+                logger.info("正在关闭后台线程池...")
+                email_processor.manual_thread_pool.shutdown(wait=False)
+                email_processor.realtime_thread_pool.shutdown(wait=False)
+                logger.info("后台邮件轮询服务已关闭")
+        except Exception as e:
+            logger.error(f"清理后台服务失败: {e}")
+            
         if db:
             db.close()
         logger.info("本地数据库连接已断开。程序已安全退出。")
+        # 强制退出整个进程，防止底层网络未决 socket 等非守护线程阻塞导致终端进程挂起
+        os._exit(0)
 
 if __name__ == '__main__':
     main()

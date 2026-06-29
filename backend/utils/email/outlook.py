@@ -93,8 +93,8 @@ class OutlookMailHandler:
                 logger.info(f"尝试连接Outlook邮箱 (尝试 {retry+1}/{max_retries})")
                 callback(10, folder)
                 
-                # 创建IMAP连接
-                mail = imaplib.IMAP4_SSL('outlook.office365.com')
+                # 创建IMAP连接，设置超时时间为30秒
+                mail = imaplib.IMAP4_SSL('outlook.office365.com', timeout=30)
                 
                 # 使用OAuth2登录
                 auth_string = OutlookMailHandler.generate_auth_string(email_address, access_token)

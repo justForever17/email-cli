@@ -680,6 +680,54 @@ def get_mail_records(current_user, email_id):
     mail_records = db.get_mail_records(email_id)
     return jsonify([dict(record) for record in mail_records])
 
+@app.route('/api/emails/export', methods=['GET'])
+@token_required
+def export_emails(current_user):
+    """批量导出邮箱账号为txt"""
+    try:
+        ids_str = request.args.get('ids')
+        if ids_str:
+            try:
+                ids = [int(x.strip()) for x in ids_str.split(',') if x.strip()]
+            except ValueError:
+                return jsonify({'error': '无效的ID列表格式'}), 400
+            
+            emails = db.get_emails_by_ids(ids)
+            # 越权过滤：只导出属于当前用户的邮箱
+            emails = [e for e in emails if e['user_id'] == current_user['id']]
+        else:
+            emails = db.get_all_emails(user_id=current_user['id'])
+            emails = [dict(e) for e in emails]
+            
+        lines = []
+        for email_dict in emails:
+            mail_type = email_dict.get('mail_type', 'outlook')
+            email = email_dict.get('email', '')
+            password = email_dict.get('password', '')
+            
+            if mail_type == 'outlook':
+                client_id = email_dict.get('client_id', '') or ''
+                refresh_token = email_dict.get('refresh_token', '') or ''
+                lines.append(f"{email}----{password}----{client_id}----{refresh_token}")
+            else:
+                server = email_dict.get('server', '') or ''
+                port = email_dict.get('port', '') or ''
+                use_ssl = 1 if email_dict.get('use_ssl') else 0
+                lines.append(f"{email}----{password}----{mail_type}----{server}----{port}----{use_ssl}")
+                
+        content = "\n".join(lines)
+        return Response(
+            content,
+            mimetype="text/plain",
+            headers={
+                "Content-disposition": "attachment; filename=emails_export.txt",
+                "Access-Control-Expose-Headers": "Content-Disposition"
+            }
+        )
+    except Exception as e:
+        logger.error(f"导出邮箱失败: {str(e)}")
+        return jsonify({'error': f'导出失败: {str(e)}'}), 500
+
 @app.route('/api/emails/import', methods=['POST'])
 @token_required
 def import_emails(current_user):

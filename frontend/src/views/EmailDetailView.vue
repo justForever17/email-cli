@@ -3,7 +3,13 @@
     <div class="header-section">
       <el-page-header @back="goBack" :title="'返回邮箱列表'">
         <template #content>
-          <span class="email-title">{{ email ? email.email : '加载中...' }}</span>
+          <span 
+            class="email-title cursor-pointer hover-underline" 
+            @click="copyToClipboard(email ? email.email : '')"
+            title="点击复制邮箱"
+          >
+            {{ email ? email.email : '加载中...' }}
+          </span>
         </template>
       </el-page-header>
       
@@ -123,6 +129,18 @@ const getProcessingStatus = (id) => {
 const formatDate = (dateString) => {
   if (!dateString) return '无'
   return dayjs(dateString).format('YYYY-MM-DD HH:mm:ss')
+}
+
+// 复制到剪切板
+const copyToClipboard = async (text) => {
+  if (!text) return
+  try {
+    await navigator.clipboard.writeText(text)
+    ElMessage.success('已成功复制邮箱名到剪切板！')
+  } catch (err) {
+    console.error('复制失败:', err)
+    ElMessage.error('复制失败，请手动复制')
+  }
 }
 
 // 返回
@@ -284,5 +302,13 @@ onMounted(() => {
     flex-direction: column;
     gap: 5px;
   }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover-underline:hover {
+  text-decoration: underline;
 }
 </style> 
